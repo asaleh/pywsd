@@ -6,9 +6,12 @@
 # URL:
 # For license information, see LICENSE.md
 
-from nltk.corpus import wordnet as wn
 import random
+
+from nltk.corpus import wordnet as wn
+
 random.seed(0)
+
 
 def random_sense(ambiguous_word, pos=None):
     """ Returns a random sense. """
@@ -17,12 +20,14 @@ def random_sense(ambiguous_word, pos=None):
     else:
         return random.choice(wn.synsets(ambiguous_word, pos))
 
+
 def first_sense(ambiguous_word, pos=None):
     """ Returns the first sense. """
     if pos is None:
         return wn.synsets(ambiguous_word)[0]
     else:
         return wn.synsets(ambiguous_word, pos)[0]
+
 
 def max_lemma_count(ambiguous_word):
     """
@@ -31,8 +36,10 @@ def max_lemma_count(ambiguous_word):
     Most Frequent Sense (MFS), if no other sense annotated corpus is available.
     NOTE: The lemma counts are from the Brown Corpus
     """
-    try: sense2lemmacounts = {i:sum(j.count() for j in i.lemmas()) \
-                              for i in wn.synsets(ambiguous_word)}
-    except: sense2lemmacounts = {i:sum(j.count() for j in i.lemmas) \
-                                 for i in wn.synsets(ambiguous_word)}
+    try:
+        sense2lemmacounts = {i: sum(j.count() for j in i.lemmas()) \
+                             for i in wn.synsets(ambiguous_word)}
+    except:
+        sense2lemmacounts = {i: sum(j.count() for j in i.lemmas) \
+                             for i in wn.synsets(ambiguous_word)}
     return max(sense2lemmacounts, key=sense2lemmacounts.get)

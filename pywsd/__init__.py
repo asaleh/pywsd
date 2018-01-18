@@ -8,11 +8,10 @@
 
 from __future__ import absolute_import
 
-import pywsd.lesk
 import pywsd.baseline
+import pywsd.lesk
 import pywsd.similarity
+from allwords_wsd import disambiguate
 
-#import semcor
-#import semeval
-
-from pywsd.allwords_wsd import disambiguate
+# import semcor
+# import semeval

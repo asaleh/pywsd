@@ -11,9 +11,9 @@ from distutils.core import setup
 setup(
     name='pywsd',
     version='1.0.2',
-    packages=['pywsd',],
+    packages=['pywsd', ],
     description='Python WSD',
     long_description='Python Implementations of Word Sense Disambiguation (WSD) technologies',
     license="MIT",
-    install_requires = ['nltk', 'numpy']
+    install_requires=['nltk', 'numpy']
 )

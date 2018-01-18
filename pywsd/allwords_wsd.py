@@ -8,13 +8,13 @@
 
 from string import punctuation
 
-from nltk import word_tokenize, pos_tag
-from nltk.corpus import wordnet as wn
 from nltk.corpus import stopwords
+from nltk.corpus import wordnet as wn
 
-from pywsd.lesk import simple_lesk, original_lesk
-from pywsd.similarity import max_similarity
-from pywsd.utils import lemmatize, lemmatize_sentence
+from lesk import simple_lesk, original_lesk
+from similarity import max_similarity
+from utils import lemmatize_sentence
+from BLM_Disambigute import BLM_WSD
 
 """
 This is a module for all-words full text WSD
@@ -26,6 +26,7 @@ Step 2: Iterates through the tokens and only disambiguate the content words.
 
 stopwords = stopwords.words('english') + list(punctuation)
 
+
 def disambiguate(sentence, algorithm=simple_lesk,
                  context_is_lemmatized=False, similarity_option='path',
                  keepLemmas=False, prefersNone=True):
@@ -35,18 +36,18 @@ def disambiguate(sentence, algorithm=simple_lesk,
         surface_words, lemmas, morphy_poss = lemmatize_sentence(sentence, keepWordPOS=True)
         lemma_sentence = " ".join(lemmas)
     else:
-        lemma_sentence = sentence # TODO: Miss out on POS specification, how to resolve?
+        lemma_sentence = sentence  # TODO: Miss out on POS specification, how to resolve?
     for word, lemma, pos in zip(surface_words, lemmas, morphy_poss):
-        if lemma not in stopwords: # Checks if it is a content word
+        if lemma not in stopwords:  # Checks if it is a content word
             try:
-                wn.synsets(lemma)[0]
-                if algorithm == original_lesk: # Note: Original doesn't care about lemmas
+                print(wn.synsets(lemma)[0])
+                if algorithm == original_lesk:  # Note: Original doesn't care about lemmas
                     synset = algorithm(lemma_sentence, lemma)
                 elif algorithm == max_similarity:
                     synset = algorithm(lemma_sentence, lemma, pos=pos, option=similarity_option)
                 else:
                     synset = algorithm(lemma_sentence, lemma, pos=pos, context_is_lemmatized=True)
-            except: # In case the content word is not in WordNet
+            except:  # In case the content word is not in WordNet
                 synset = '#NOT_IN_WN#'
         else:
             synset = '#STOPWORD/PUNCTUATION#'
@@ -62,3 +63,7 @@ def disambiguate(sentence, algorithm=simple_lesk,
         tagged_sentence = [(word, lemma, None) if str(tag).startswith('#')
                            else (word, lemma, tag) for word, lemma, tag in tagged_sentence]
     return tagged_sentence
+
+if __name__ == '__main__':
+    disambiguate('Your Oct . 6 editorial `` The Ill Homeless '' referred to research by us and six of our colleagues that was reported in the Sept . 8 issue of the Journal of the American Medical Association .', BLM_WSD)
+

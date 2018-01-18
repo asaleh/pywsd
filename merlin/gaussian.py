@@ -16,18 +16,19 @@ Where miu is the gaussian mean, and sigma^2 is the gaussian variance
 
 
 class Gaussian:
-    def __init__(self,mean,variance):
+    def __init__(self, mean, variance):
         self.mean = mean;
         self.variance = variance;
 
-    def sample(self,points):
-        return np.random.normal(self.mean,self.variance,points)
+    def sample(self, points):
+        return np.random.normal(self.mean, self.variance, points)
+
 
 def estimate_gaussian(X):
     """
     Returns the mean and the variance of a data set of X points assuming that 
     the points come from a gaussian distribution X.
     """
-    mean = np.mean(X,0)
-    variance = np.var(X,0)
-    return Gaussian(mean,variance)
+    mean = np.mean(X, 0)
+    variance = np.var(X, 0)
+    return Gaussian(mean, variance)

@@ -16,7 +16,7 @@ Python Implementations of Word Sense Disambiguation (WSD) technologies:
   
 * **Supervised WSD** (in progress)
   * SVM WSD (Lee, Ng and Chia 2004)
-  * It Makes Sense (IMS) (Zhong and Ng, 2010) 
+  * It Makes Sense (IMS) (Zhong and Nis it by change thatg, 2010)
  
 * **Vector Space Models** (in progress)
   * LSI/LSA
@@ -50,7 +50,7 @@ Usage
 
 ```
 $ python
->>> from pywsd.lesk import simple_lesk
+>>> from lesk import simple_lesk
 >>> sent = 'I went to the bank to deposit my money'
 >>> ambiguous = 'bank'
 >>> answer = simple_lesk(sent, ambiguous, pos='n')
@@ -62,8 +62,8 @@ u'a building in which the business of banking transacted
 
 For all-words WSD, try:
 ```
->>> from pywsd import disambiguate
->>> from pywsd.similarity import max_similarity as maxsim
+>>> from import disambiguate
+>>> from similarity import max_similarity as maxsim
 >>> disambiguate('I went to the bank to deposit my money')
 [('I', None), ('went', Synset('run_low.v.01')), ('to', None), ('the', None), ('bank', Synset('depository_financial_institution.n.01')), ('to', None), ('deposit', Synset('deposit.v.02')), ('my', None), ('money', Synset('money.n.03'))]
 >>> disambiguate('I went to the bank to deposit my money', algorithm=maxsim, similarity_option='wup', keepLemmas=True)

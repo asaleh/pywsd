@@ -6,11 +6,13 @@
 # URL:
 # For license information, see LICENSE.md
 
-import os, io
+import io
+import os
 from collections import namedtuple
 
-from BeautifulSoup import BeautifulSoup as bsoup
-from pywsd.utils import remove_tags, semcor_to_synset
+from bs4 import BeautifulSoup as bsoup
+
+from utils import remove_tags
 
 Instance = namedtuple('instance', 'id, lemma, word')
 Term = namedtuple('term', 'id, pos, lemma, sense, type')
@@ -34,14 +36,16 @@ class SemEval2007_Coarse_WSD:
     d001.s001.t001 editorial editorial
     [u'editorial%1:10:00::']
     """
-    def __init__(self, path='data/semeval2007_coarse_grain_wsd/'):
+
+    def __init__(self,
+                 path='/home/alisaleh/Documents/DevExt/pywsd/pywsd/data/semeval2007_coarse_grain_wsd/'):
         self.path = path
         self.test_file = self.path + 'eng-coarse-all-words.xml'
         self.test_ans = self.path + 'dataset21.test.key'
 
     def fileids(self):
         """ Returns files from SemEval2007 Coarse-grain All-words WSD task. """
-        return [os.path.join(self.path,i) for i in os.listdir(self.path)]
+        return [os.path.join(self.path, i) for i in os.listdir(self.path)]
 
     def sents(self, filename=None):
         """
@@ -78,15 +82,15 @@ class SemEval2007_Coarse_WSD:
     def yield_sentences(self):
         test_file = io.open(self.test_file, 'r').read()
         inst2ans = self.get_answers()
-        for text in bsoup(test_file).findAll('text'):
+        for text in bsoup(test_file, "lxml").findAll('text'):
             if not text:
                 continue
             textid = text['id']
             context_doc = " ".join([remove_tags(i) for i in
                                     str(text).split('\n') if remove_tags(i)])
             for sent in text.findAll('sentence'):
-                context_sent =  " ".join([remove_tags(i) for i in
-                                      str(sent).split('\n') if remove_tags(i)])
+                context_sent = " ".join([remove_tags(i) for i in
+                                         str(sent).split('\n') if remove_tags(i)])
                 yield sent, context_sent, context_doc, inst2ans, textid
 
     def test_instances(self):
@@ -132,8 +136,8 @@ class SemEval2007_Coarse_WSD:
                 instances[instid] = Instance(instid, lemma, word)
 
             tokens = []
-            for i in sent: # Iterates through BeautifulSoup object.
-                if str(i).startswith('<instance'): # BeautifulSoup.Tag
+            for i in sent:  # Iterates through BeautifulSoup object.
+                if str(i).startswith('<instance'):  # BeautifulSoup.Tag
                     instid = sent.find('instance')['id']
                     inst = instances[instid]
                     answer = inst2ans[instid]
@@ -141,11 +145,20 @@ class SemEval2007_Coarse_WSD:
                                 type='open')
                     tokens.append(Word(instid, inst.word,
                                        sentid, textid, term))
-                else: # if BeautifulSoup.NavigableString
-                    tokens+=[Word(None, w, sentid, textid, None)
-                             for w in i.split()]
+                else:  # if BeautifulSoup.NavigableString
+                    tokens += [Word(None, w, sentid, textid, None)
+                               for w in i.split()]
             yield tokens
 
     def __iter__(self):
         """ Iterator function, duck-type of test_instances() """
         return self.sentences()
+
+
+if __name__ == '__main__':
+    coarse_wsd = SemEval2007_Coarse_WSD()
+    sentences = coarse_wsd.sentences()
+    for tokens in sentences:
+        for token in tokens:
+            print(token)
+        break
